@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>读得深 · 初一首月训练 Demo</title>
+<meta name="description" content="初一首月阅读训练月度 demo：12 篇精读 + 4 个名著切片 + 16 个晨读微篇 + 4 次周测，选文全国共用、题壳按地区分。">
+<meta name="theme-color" content="#f9f9f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0d0d" media="(prefers-color-scheme: dark)">
+<style>
+:root{
+  color-scheme: light dark;
+  --plane:#f9f9f7; --surface:#fcfcfb; --surface-2:#f3f2ef;
+  --ink:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
+  --accent:#2a78d6; --accent-soft:#86b6ef; --track:#cde2fb; --wash:#eaf2fd;
+  --emph-on:#2a78d6; --emph-off:#86b6ef;
+  --ok:#006300; --warn:#fab219;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --plane:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+    --ink:#fff; --ink-2:#c3c2b7; --ink-muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+    --accent:#3987e5; --accent-soft:#6da7ec; --track:#2c2c2a; --wash:#141c26;
+    --emph-on:#6da7ec; --emph-off:#256abf;
+    --ok:#0ca30c;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--plane);color:var(--ink);
+ font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+ font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;padding:0 16px 96px;min-height:100vh}
+h1,h2,h3{margin:0;line-height:1.35}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.hide{display:none!important}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:var(--plane);padding:14px 0 10px;margin:0 -16px;padding-left:16px;padding-right:16px;border-bottom:1px solid var(--border)}
+.top .row{display:flex;align-items:center;gap:10px}
+.brand{font-size:17px;font-weight:680;letter-spacing:-.01em}
+.brand s{text-decoration:none;color:var(--ink-muted);font-weight:400;font-size:12.5px;margin-left:6px}
+.back{font-size:14px;color:var(--accent);padding:4px 0}
+/* region tabs */
+.regions{display:flex;gap:6px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+.regions::-webkit-scrollbar{display:none}
+.regions button{flex:0 0 auto;font-size:12.5px;padding:6px 11px;border-radius:999px;border:1px solid var(--border);color:var(--ink-2);background:var(--surface);white-space:nowrap}
+.regions button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin:12px 0}
+.eyebrow{font-size:11.5px;letter-spacing:.14em;color:var(--ink-muted);margin:0 0 8px;text-transform:uppercase}
+h2.sec{font-size:18px;font-weight:650;margin:0 0 3px}
+.sub{font-size:12.5px;color:var(--ink-muted);margin:0 0 12px}
+p{margin:0 0 10px;font-size:15px;color:var(--ink-2)}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 14px}
+.kpi{text-align:center;background:var(--surface-2);border-radius:10px;padding:9px 4px}
+.kpi b{display:block;font-size:19px;font-weight:660;letter-spacing:-.01em}
+.kpi span{font-size:11px;color:var(--ink-muted)}
+/* meter */
+.meter{margin:2px 0 4px}
+.meter .lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-2);margin-bottom:6px}
+.meter .lab b{color:var(--ink);font-variant-numeric:tabular-nums}
+.meter .track{height:10px;border-radius:5px;background:var(--track);overflow:hidden}
+.meter .fill{height:100%;background:var(--accent);border-radius:5px;transition:width .4s}
+
+/* week */
+.week{border:1px solid var(--border);border-radius:var(--r);background:var(--surface);margin:10px 0;overflow:hidden}
+.week>summary{list-style:none;cursor:pointer;padding:13px 15px;display:flex;align-items:center;gap:11px}
+.week>summary::-webkit-details-marker{display:none}
+.week .wn{flex:0 0 38px;height:38px;border-radius:10px;background:var(--wash);color:var(--accent);display:grid;place-items:center;font-weight:680;font-size:13px;line-height:1.1;text-align:center}
+.week .wt{flex:1}
+.week .wt b{display:block;font-size:15.5px;font-weight:620;color:var(--ink)}
+.week .wt i{font-style:normal;font-size:12px;color:var(--ink-muted)}
+.week .wc{font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.items{border-top:1px solid var(--grid)}
+.item{display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid var(--grid);width:100%;text-align:left}
+.item:last-child{border-bottom:0}
+.tick{flex:0 0 20px;height:20px;border-radius:50%;border:1.5px solid var(--axis);display:grid;place-items:center;font-size:11px;color:transparent}
+.item.done .tick{background:var(--accent);border-color:var(--accent);color:#fff}
+.it{flex:1;min-width:0}
+.it b{display:block;font-size:14.5px;font-weight:560;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it i{font-style:normal;font-size:11.5px;color:var(--ink-muted)}
+.badge{font-size:10.5px;padding:2px 7px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);flex:0 0 auto}
+.badge.play{background:var(--accent);color:#fff;font-weight:600}
+.badge.reg{background:var(--wash);color:var(--accent)}
+
+/* lesson */
+.steps{display:flex;gap:5px;margin:14px 0 4px}
+.steps div{flex:1;height:3px;border-radius:2px;background:var(--grid)}
+.steps div.on{background:var(--accent)}
+.stephd{display:flex;align-items:baseline;gap:9px;margin:14px 0 10px}
+.stephd b{font-size:20px;font-weight:700;color:var(--accent)}
+.stephd span{font-size:12.5px;color:var(--ink-muted)}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--border);background:var(--surface);border-radius:11px;padding:12px 13px;margin:0 0 8px;font-size:14.5px;color:var(--ink-2);transition:.15s}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--wash);color:var(--ink)}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,transparent)}
+.opt.wrong{border-color:var(--axis);opacity:.55}
+.scaf{display:flex;gap:6px;margin:0 0 12px}
+.scaf button{flex:1;font-size:12.5px;padding:7px 0;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--ink-2)}
+.scaf button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.bgcard{background:var(--wash);border-radius:11px;padding:11px 13px;font-size:13px;color:var(--ink-2);margin:0 0 12px}
+.bgcard b{color:var(--ink)}
+.txt{font-size:16.5px;line-height:2.05;color:var(--ink)}
+.txt p{font-size:16.5px;color:var(--ink);margin:0 0 15px;text-indent:2em}
+.txt p.sel{background:var(--wash);border-radius:6px;box-shadow:0 0 0 4px var(--wash)}
+.an{border-bottom:1px dashed var(--accent);cursor:pointer;color:inherit}
+.anbox{font-size:12.5px;color:var(--ink-2);background:var(--surface-2);border-left:2px solid var(--accent-soft);padding:7px 11px;border-radius:0 8px 8px 0;margin:-6px 0 14px 2em}
+textarea{width:100%;border:1px solid var(--border);border-radius:11px;background:var(--surface);padding:11px;font:inherit;font-size:14.5px;color:var(--ink);resize:vertical;min-height:84px}
+textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.cta{display:block;width:100%;background:var(--accent);color:#fff;font-size:15.5px;font-weight:620;padding:13px;border-radius:12px;margin:16px 0 0;text-align:center}
+.cta[disabled]{opacity:.4}
+.ghost{display:block;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--ink-2);font-size:14px;padding:11px;border-radius:12px;margin:8px 0 0;text-align:center}
+.qh{font-size:15px;color:var(--ink);font-weight:600;margin:16px 0 4px}
+.qh small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-muted);letter-spacing:.06em;margin-bottom:5px}
+.fb{font-size:13px;border-radius:10px;padding:9px 11px;margin:6px 0 0}
+.fb.y{background:color-mix(in srgb,var(--ok) 10%,transparent);color:var(--ok)}
+.fb.n{background:var(--surface-2);color:var(--ink-2)}
+.evid{border:1px dashed var(--axis);border-radius:11px;padding:10px 12px;font-size:13px;color:var(--ink-muted);margin:8px 0 0}
+.evid.has{border-style:solid;border-color:var(--accent-soft);color:var(--ink-2);background:var(--wash)}
+/* peer bars */
+.peer{margin:6px 0 0}
+.peer .r{display:flex;align-items:center;gap:9px;margin:0 0 7px;font-size:13px}
+.peer .k{flex:0 0 22px;color:var(--ink-muted)}
+.peer .bar{flex:1;height:18px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.peer .bar i{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--emph-off)}
+.peer .r.me .bar i{background:var(--emph-on)}
+.peer .v{flex:0 0 34px;text-align:right;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.peer .r.me .v{color:var(--ink);font-weight:620}
+.quote{border-left:2px solid var(--accent-soft);padding:2px 0 2px 12px;margin:0 0 12px;font-size:14px;color:var(--ink-2)}
+.quote b{display:block;font-size:11.5px;color:var(--ink-muted);font-weight:400;margin-bottom:2px}
+.tiers{display:flex;gap:6px;margin:0 0 10px}
+.tiers button{flex:1;border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:9px 4px;font-size:12.5px;color:var(--ink-2);text-align:center}
+.tiers button b{display:block;font-size:14px;color:var(--ink);font-weight:620}
+.tiers button[aria-pressed="true"]{border-color:var(--accent);background:var(--wash)}
+.done-hero{text-align:center;padding:30px 0 10px}
+.done-hero .big{font-size:46px;font-weight:700;color:var(--accent);letter-spacing:-.02em}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--grid);color:var(--ink-2);vertical-align:top}
+th{font-size:11.5px;color:var(--ink-muted);font-weight:520}
+td b{color:var(--ink);font-weight:600}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.foot{font-size:11.5px;color:var(--ink-muted);text-align:center;line-height:1.9;padding:22px 0 0}
+.foot a{color:var(--ink-2)}
+.note{font-size:11.5px;color:var(--ink-muted);margin:10px 0 0}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="top">
+  <div class="row">
+    <button class="back hide" id="back">‹ 返回</button>
+    <div class="brand" id="brand">读得深<s>初一首月 · Demo</s></div>
+  </div>
+  <div class="regions" id="regions"></div>
+</div>
+
+<!-- ============ 月度总览 ============ -->
+<div id="v-month">
+  <div class="card">
+    <p class="eyebrow">首月总量</p>
+    <h2 class="sec">9/21 – 10/18 · 打第一次月考</h2>
+    <p class="sub">对应统编版（2024）七上第 1–2 单元 ＋《朝花夕拾》起步</p>
+    <div class="kpis">
+      <div class="kpi"><b>12</b><span>精读</span></div>
+      <div class="kpi"><b>4</b><span>名著切片</span></div>
+      <div class="kpi"><b>16</b><span>晨读微篇</span></div>
+      <div class="kpi"><b>4</b><span>周测</span></div>
+    </div>
+    <div class="meter">
+      <div class="lab"><span>本月完成</span><span><b id="pn">0</b> / 36 · 约 <b id="ph">0</b> 分钟</span></div>
+      <div class="track"><i class="fill" id="pf" style="display:block;width:0%"></i></div>
+    </div>
+    <p class="note">全月合计约 <b>4.6 小时</b>，平均每天 10 分钟 —— 远低于未成年人模式 1 小时上限。</p>
+  </div>
+
+  <div id="weeks"></div>
+
+  <div class="card">
+    <p class="eyebrow">这一版在演示什么</p>
+    <h2 class="sec">选文全国共用，题壳按地区分</h2>
+    <p>切换顶部地区，<b>月历里的选文一篇都不会变</b>，变的只有每篇的第 7 题「地区加练」和每周的周测卷型。</p>
+    <p class="note">这样 4 个地区的首月内容成本约 1.3 万元；若按地区各做一套内容，是 4 倍。</p>
+  </div>
+
+  <div class="card" id="regcard"></div>
+
+  <div class="card">
+    <p class="eyebrow">家长端 · 周报样张</p>
+    <h2 class="sec">第一位永远是孩子的原话</h2>
+    <div class="quote"><b>本周他写的</b>「阿长不识字，连书名都说错成『三哼经』，可她偏偏买到了。别人不肯做的事她做成了 —— 我觉得鲁迅震悚的不是书，是有人把他随口说的话当了真。」</div>
+    <table>
+      <tr><td><b>本周完成</b></td><td class="num">5 / 9</td></tr>
+      <tr><td><b>专注时长</b></td><td class="num">13.2 分钟/篇</td></tr>
+      <tr><td><b>找证据</b>（L3 带文本证据）</td><td class="num" style="color:var(--ok)">4 / 4</td></tr>
+      <tr><td><b>下周会读</b></td><td>《五猖会》片段 · 说明文 2 篇</td></tr>
+    </table>
+    <p class="note">不提供催办、实时提醒、时长监控 —— 只做「看得见」，不做「管得着」。</p>
+  </div>
+</div>
+
+<!-- ============ 课程 ============ -->
+<div id="v-lesson" class="hide"></div>
+<!-- ============ 周测 ============ -->
+<div id="v-quiz" class="hide"></div>
+
+<div class="foot" id="foot">
+  读得深 · 初一首月训练 Demo · 2026-09<br>
+  依据项目文档 <code>06-初一首月阅读训练量与分地区内容规格.md</code><br>
+  课文节选自鲁迅《朝花夕拾·阿长与〈山海经〉》（公有领域，文本取自维基文库）<br>
+  其余篇目名称为内容规格示意，非实际成品；周测配分为示意<br>
+  <a href="https://pumo0926-cpu.github.io/dudeshen-reading-h5/">← 查看完整产品方案</a>
+</div>
+
+</div>
+
+<script>
+/* ---------------- data ---------------- */
+const REGIONS=[
+ {id:'A',name:'京津冀',full:100,ex:'非连续性文本关联',exq:'下面是同主题的一张图表材料，它与选文说的是同一件事吗？请说明理由。',
+  paper:[['积累·运用（情境化）',12],['现代文阅读 ①记叙',12],['现代文阅读 ②非连续性文本',10],['古诗文（课内）',8],['名著阅读',8]],note:'现代文篇数多、单篇题量少；名著必考'},
+ {id:'B',name:'沪',full:150,ex:'文言实词迁移',exq:'选文中「震悚」的「悚」是什么意思？课内《世说新语》里哪个词与它用法相近？',
+  paper:[['古诗文默写',10],['文言文阅读（课内）',14],['现代文阅读 ①',14],['现代文阅读 ②',8],['综合运用（情境应用文）',4]],note:'古诗文分值最高；综合运用独立成块'},
+ {id:'C',name:'苏浙粤',full:120,ex:'图文转换',exq:'请把选文里「我」得到宝书的经过，改写成一张班级读书海报的三条要点。',
+  paper:[['任务情境导入 ＋ 积累运用',12],['现代文阅读 ①',14],['现代文阅读 ②（含图文转换）',12],['古诗文',8],['任务收束：写一段推荐语',4]],note:'整卷用一个任务情境串起来'},
+ {id:'D',name:'川渝鄂',full:150,ex:'课外文言短章',exq:'附一则 80 字课外文言短章，与选文同讲「守信」，请找出两者相通的一句。',
+  paper:[['积累运用',10],['文言文 ①课内',8],['文言文 ②课外',8],['古诗词鉴赏',6],['现代文阅读',18]],note:'文言两篇（课内＋课外）＋古诗词鉴赏'}
+];
+const WEEKS=[
+ {n:'W1',t:'四季与观察',items:[
+  {k:'精读',b:'《春》· 课内锚定',i:'写景散文 · 不提供原文，对着课本读 · 12 分钟'},
+  {k:'精读',b:'雨后的老槐树',i:'写景散文 · 原创 · 860 字 · 13 分钟'},
+  {k:'精读',b:'校服该不该统一',i:'非连续性文本 · 原创 · 620 字＋2 图 · 12 分钟'},
+  {k:'切片',b:'《狗·猫·鼠》片段',i:'名著切片 · 朝花夕拾 · 1240 字 · 14 分钟'},
+  {k:'晨读',b:'晨读 4 篇：观沧海 / 闻王昌龄左迁 / 咏雪 / 陈太丘与友期',i:'古诗 2 ＋ 文言短章 2 · 各 3 分钟'},
+  {k:'周测',b:'第 1 周周测',i:'单文体 · 按地区卷型 · 25 分钟'}]},
+ {n:'W2',t:'至爱亲情',items:[
+  {k:'精读',b:'《秋天的怀念》· 课内锚定',i:'写人记事 · 不提供原文，对着课本读 · 12 分钟'},
+  {k:'精读',b:'修车铺的老陈',i:'写人记事 · 原创 · 950 字 · 14 分钟'},
+  {k:'精读',b:'外婆的樟木箱',i:'写人记事 · 原创 · 1010 字 · 14 分钟'},
+  {k:'切片',b:'《阿长与〈山海经〉》片段',i:'名著切片 · 1174 字 · 14 分钟',play:1},
+  {k:'晨读',b:'晨读 4 篇：次北固山下 / 天净沙·秋思 / 论语二则 / 世说新语一则',i:'古诗 2 ＋ 文言短章 2 · 各 3 分钟'},
+  {k:'周测',b:'第 2 周周测',i:'单文体 · 按地区卷型 · 25 分钟'}]},
+ {n:'W3',t:'学习与成长',items:[
+  {k:'精读',b:'班级图书角的一周',i:'非连续性文本 · 原创 · 650 字＋1 表 · 12 分钟'},
+  {k:'精读',b:'蚂蚁是怎么认路的',i:'说明文 · 原创 · 820 字 · 13 分钟'},
+  {k:'精读',b:'我的第一次值日',i:'写人记事 · 原创 · 900 字 · 13 分钟'},
+  {k:'切片',b:'《五猖会》片段',i:'名著切片 · 1380 字 · 15 分钟'},
+  {k:'晨读',b:'晨读 4 篇：峨眉山月歌 / 江南逢李龟年 / 文言短章 2 则',i:'古诗 2 ＋ 文言短章 2 · 各 3 分钟'},
+  {k:'周测',b:'第 3 周周测',i:'双文体 · 按地区卷型 · 30 分钟'}]},
+ {n:'W4',t:'月考模拟',items:[
+  {k:'精读',b:'老街上的剃头匠',i:'写人记事 · 原创 · 1050 字 · 15 分钟'},
+  {k:'精读',b:'秋天的叶子为什么会变色',i:'说明文 · 原创 · 850 字 · 13 分钟'},
+  {k:'精读',b:'去年的槐花',i:'写景散文 · 原创 · 900 字 · 13 分钟'},
+  {k:'切片',b:'《藤野先生》片段',i:'名著切片 · 1520 字 · 15 分钟'},
+  {k:'晨读',b:'晨读 4 篇：行军九日思长安 / 夜上受降城闻笛 / 文言短章 2 则',i:'古诗 2 ＋ 文言短章 2 · 各 3 分钟'},
+  {k:'周测',b:'第 4 周周测 · 整卷模拟',i:'按地区卷型完整缩小卷 · 30 分钟',quiz:1}]}
+];
+const TEXT=["这种敬意，虽然也逐渐淡薄起来，但完全消失，大概是在知道她谋害了我的隐鼠之后。那时就极严重地诘问，而且当面叫她阿长。我想我又不真做小长毛，不去攻城，也不放炮，更不怕炮炸，我惧惮她什么呢！", "但当我哀悼隐鼠，给它复仇的时候，一面又在渴慕着绘图的《山海经》了。这渴慕是从一个远房的叔祖惹起来的。他是一个胖胖的，和蔼的老人，爱种一点花木，如珠兰、茉莉之类，还有极其少见的，据说从北边带回去的马缨花。他的太太却正相反，什么也莫名其妙，曾将晒衣服的竹竿搁在珠兰的枝条上，枝折了，还要愤愤地咒骂道：“死尸！”这老人是个寂寞者，因为无人可谈，就很爱和孩子们往来，有时简直称我们为“小友”。在我们聚族而居的宅子里，只有他书多，而且特别。制艺和试帖诗，自然也是有的；但我却只在他的书斋里，看见过陆玑的《毛诗草木鸟兽虫鱼疏》，还有许多名目很生的书籍。我那时最爱看的是《花镜》，上面有许多图。他说给我听，曾经有过一部绘图的《山海经》，画着人面的兽，九头的蛇，三脚的鸟，生着翅膀的人，没有头而以两乳当作眼睛的怪物，……可惜现在不知道放在那里了。", "我很愿意看看这样的图画，但不好意思力逼他去寻找，他是很疏懒的。问别人呢，谁也不肯真实地回答我。压岁钱还有几百文，买罢，又没有好机会。有书买的大街离我家远得很，我一年中只能在正月间去玩一趟，那时候，两家书店都紧紧地关着门。", "玩的时候倒是没有什么的，但一坐下，我就记得绘图的《山海经》。", "大概是太过于念念不忘了，连阿长也来问《山海经》是怎么一回事。这是我向来没有和她说过的，我知道她并非学者，说了也无益；但既然来问，也就都对她说了。", "过了十多天，或者一个月罢，我还记得，是她告假回家以后的四五天，她穿着新的蓝布衫回来了，一见面，就将一包书递给我，高兴地说道：", "“哥儿，有画儿的‘三哼经’，我给你买来了！”", "我似乎遇着了一个霹雳，全体都震悚起来；赶紧去接过来，打开纸包，是四本小小的书，略略一翻，人面的兽，九头的蛇，……果然都在内。", "这又使我发生新的敬意了，别人不肯做，或不能做的事，她却能够做成功。她确有伟大的神力。谋害隐鼠的怨恨，从此完全消灭了。", "这四本书，乃是我最初得到，最为心爱的宝书。", "书的模样，到现在还在眼前。可是从还在眼前的模样来说，却是一部刻印都十分粗拙的本子。纸张很黄；图像也很坏，甚至于几乎全用直线凑合，连动物的眼睛也都是长方形的。但那是我最为心爱的宝书，看起来，确是人面的兽；九头的蛇；一脚的牛；袋子似的帝江；没有头而“以乳为目，以脐为口”，还要“执干戚而舞”的刑天。", "此后我就更其搜集绘图的书，于是有了石印的《尔雅音图》和《毛诗品物图考》，又有了《点石斋丛画》和《诗画舫》。《山海经》也另买了一部石印的，每卷都有图赞，绿色的画，字是红的，比那木刻的精致得多了。这一部直到前年还在，是缩印的郝懿行疏。木刻的却已经记不清是什么时候失掉了。"];
+const ANN={
+ 1:[['渴慕','非常想得到。比「想要」更重，带着长久的向往。'],['绘图','带插图的。那个年代的书多为白文，有图的稀罕。']],
+ 2:[['疏懒','懒散，不爱张罗事。']],
+ 5:[['告假','请假。阿长是回自己家去了，买书是她自己的主意。']],
+ 7:[['震悚','因震惊而发抖。悚，害怕、惊动。']],
+ 10:[['粗拙','粗糙笨拙。书其实印得很差，但「我」依然当宝贝。']]
+};
+const BG='<b>背景卡</b>　鲁迅 1926 年写于厦门，回忆童年。阿长是照看他的保姆，不识字。《山海经》是一部古代神话地理书，书中有人面兽、九头蛇这类怪异插图，是当时孩子眼里的「奇书」。';
+
+/* ---------------- state ---------------- */
+const KEY='dds_month_v1';
+let S=JSON.parse(localStorage.getItem(KEY)||'{"done":{},"region":"A"}');
+const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+const R=()=>REGIONS.find(r=>r.id===S.region);
+const totalItems=36, minutesPer={精读:13,切片:14,晨读:12,周测:27};
+
+/* ---------------- month view ---------------- */
+function renderRegions(){
+  document.getElementById('regions').innerHTML=REGIONS.map(r=>
+    `<button data-r="${r.id}" aria-pressed="${r.id===S.region}">${r.name}·${r.full}</button>`).join('');
+}
+function countDone(){
+  let n=0,mins=0;
+  WEEKS.forEach((w,wi)=>w.items.forEach((it,ii)=>{
+    if(S.done[wi+'-'+ii]){ n+= (it.k==='晨读'?4:1); mins+=minutesPer[it.k]; }
+  }));
+  return [n,mins];
+}
+function renderMonth(){
+  const [n,mins]=countDone();
+  document.getElementById('pn').textContent=n;
+  document.getElementById('ph').textContent=mins;
+  document.getElementById('pf').style.width=Math.round(n/totalItems*100)+'%';
+  document.getElementById('weeks').innerHTML=WEEKS.map((w,wi)=>{
+    const dn=w.items.filter((_,ii)=>S.done[wi+'-'+ii]).length;
+    return `<details class="week"${wi===1?' open':''}>
+      <summary><span class="wn">${w.n}</span><span class="wt"><b>${w.t}</b><i>精读 3 · 切片 1 · 晨读 4 · 周测 1</i></span><span class="wc">${dn}/6</span></summary>
+      <div class="items">${w.items.map((it,ii)=>{
+        const done=S.done[wi+'-'+ii]?' done':'';
+        const tag=it.play?'<span class="badge play">可试玩</span>':(it.quiz?`<span class="badge reg">${R().name}卷型</span>`:`<span class="badge">${it.k}</span>`);
+        return `<button class="item${done}" data-w="${wi}" data-i="${ii}"><span class="tick">✓</span><span class="it"><b>${it.b}</b><i>${it.i}</i></span>${tag}</button>`;
+      }).join('')}</div></details>`;
+  }).join('');
+  const r=R();
+  document.getElementById('regcard').innerHTML=
+    `<p class="eyebrow">当前地区 · ${r.name}型</p><h2 class="sec">周测卷型（示意，满分 50 的 30 分钟缩小卷）</h2>
+     <p class="sub">${r.note}　｜　本地中考语文满分 ${r.full} 分</p>
+     <table><thead><tr><th>板块</th><th class="num">分值</th></tr></thead><tbody>
+     ${r.paper.map(p=>`<tr><td>${p[0]}</td><td class="num">${p[1]}</td></tr>`).join('')}
+     </tbody></table>
+     <p class="note">每篇精读的第 7 题「地区加练」在本地区为：<b style="color:var(--ink)">${r.ex}</b></p>`;
+}
+
+/* ---------------- lesson ---------------- */
+let L={step:1,guess:null,l1:[null,null],l2:null,l3:'',evid:null,tier:1,write:''};
+const GUESS=['她只是随口一问，过两天就忘了','她会去问别人这书长什么样','她真的会想办法买来','她会劝「我」别惦记这些闲书'];
+const PEER=[18,24,46,12];
+function lessonHTML(){
+  const r=R();
+  const nav=(can,label,fn)=>`<button class="cta" ${can?'':'disabled'} data-act="${fn}">${label}</button>`;
+  let body='';
+  if(L.step===1){
+    body=`<div class="stephd"><b>猜</b><span>读前预判 · 60 秒 · 怎么答都对</span></div>
+    <p style="color:var(--ink)">「我」一直渴慕一本带插图的《山海经》。家里人没人替他找。这时，不识字的保姆阿长忽然来问：《山海经》是怎么一回事？</p>
+    <p><b style="color:var(--ink)">你猜，阿长接下来会怎么做？</b></p>
+    ${GUESS.map((g,i)=>`<button class="opt" data-g="${i}" aria-pressed="${L.guess===i}">${'ABCD'[i]}　${g}</button>`).join('')}
+    ${nav(L.guess!==null,'选好了，开始读','next')}`;
+  }
+  if(L.step===2){
+    const lvl=S.scaf||'半扶';
+    const showAnn=lvl==='扶', showBg=lvl!=='放';
+    body=`<div class="stephd"><b>读</b><span>同一原文 · 支架三档 · 6–8 分钟</span></div>
+    <div class="scaf">${['扶','半扶','放'].map(x=>`<button data-s="${x}" aria-pressed="${x===lvl}">${x}</button>`).join('')}</div>
+    ${showBg?`<div class="bgcard">${BG}</div>`:''}
+    <div class="txt">${TEXT.map((p,i)=>{
+      let html=p;
+      if(lvl!=='放'&&ANN[i]) ANN[i].forEach(a=>{html=html.replace(a[0],`<span class="an" data-an="${a[1]}">${a[0]}</span>`)});
+      const box=showAnn&&ANN[i]?`<div class="anbox">${ANN[i].map(a=>`<b>${a[0]}</b>：${a[1]}`).join('　｜　')}</div>`:'';
+      return `<p>${html}</p>${box}`;
+    }).join('')}</div>
+    <p class="note">节选自鲁迅《朝花夕拾·阿长与〈山海经〉》，约 1174 字。「放」档隐去全部注释与背景卡。</p>
+    ${nav(1,'读完了，去答题','next')}`;
+  }
+  if(L.step===3){
+    const q1=['阿长是在什么时候把书买来的','「我」先向谁打听过这本书','这四本书印得非常精美'];
+    body=`<div class="stephd"><b>问</b><span>三层追问 · 3–4 分钟</span></div>
+    <div class="qh"><small>L1 · 读到了什么</small>阿长是怎么知道「我」想要《山海经》的？</div>
+    ${['「我」直接求她去买','她自己来问「我」《山海经》是怎么回事','远房叔祖告诉她的'].map((o,i)=>
+      `<button class="opt ${L.l1[0]!==null?(i===1?'right':(L.l1[0]===i?'wrong':'')):''}" data-q="0" data-o="${i}" aria-pressed="${L.l1[0]===i}">${o}</button>`).join('')}
+    ${L.l1[0]!==null?`<div class="fb ${L.l1[0]===1?'y':'n'}">${L.l1[0]===1?'对。是她主动来问的 —— 这正是后面「震悚」的根。':'再看第 4 段：「连阿长也来问《山海经》是怎么一回事」。'}</div>`:''}
+
+    <div class="qh"><small>L2 · 作者怎么写的</small>「我似乎遇着了一个霹雳，全体都震悚起来」—— 这里为什么不直接写「我很高兴」？</div>
+    ${['「霹雳」写的是猝不及防，高兴是预料之中的事','因为鲁迅喜欢用比喻','为了凑字数'].map((o,i)=>
+      `<button class="opt ${L.l2!==null?(i===0?'right':(L.l2===i?'wrong':'')):''}" data-q="1" data-o="${i}" aria-pressed="${L.l2===i}">${o}</button>`).join('')}
+    ${L.l2!==null?`<div class="fb ${L.l2===0?'y':'n'}">${L.l2===0?'对。他从没指望阿长能办成，所以是「震」不是「喜」。':'提示：他此前对阿长的评价是什么？惊到发抖，说明原来的预期是什么？'}</div>`:''}
+
+    <div class="qh"><small>L3 · 你怎么看 —— 不判对错，但必须有文本证据</small>阿长买来的书「刻印都十分粗拙」，可「我」偏偏说这是「最为心爱的宝书」。你怎么理解这句话？</div>
+    <textarea id="l3" placeholder="写下你的看法，至少 30 字……">${L.l3}</textarea>
+    <div class="evid ${L.evid!==null?'has':''}" id="evid">${L.evid!==null?'已选证据：「'+TEXT[L.evid].slice(0,26)+'…」　<u>换一句</u>':'▸ 点这里从原文里选一句作为你的证据（必填）'}</div>
+    ${L.pick?`<div style="margin-top:8px">${[1,7,9,10].map(i=>`<button class="opt" data-ev="${i}" aria-pressed="${L.evid===i}">${TEXT[i].slice(0,34)}…</button>`).join('')}</div>`:''}
+    ${nav(L.l3.length>=30&&L.evid!==null,'提交，看看别人怎么想','next')}
+    ${L.l3.length<30||L.evid===null?'<p class="note">L3 不计分，但必须带文本证据才能提交 —— 没有分数就没有代写动机。</p>':''}`;
+  }
+  if(L.step===4){
+    body=`<div class="stephd"><b>辨</b><span>回看 ＋ 同龄人碰撞 · 2 分钟</span></div>
+    <div class="bgcard">读之前你猜的是：<b>${'ABCD'[L.guess]}　${GUESS[L.guess]}</b><br>现在还这么想吗？</div>
+    <p style="font-size:13px;color:var(--ink-muted);margin-bottom:4px">和你同年级的 1,284 人这样猜（你的选择为深色）</p>
+    <div class="peer">${GUESS.map((g,i)=>
+      `<div class="r ${i===L.guess?'me':''}"><span class="k">${'ABCD'[i]}</span><span class="bar"><i style="width:${PEER[i]*2}%"></i></span><span class="v">${PEER[i]}%</span></div>`).join('')}</div>
+    <p class="note" style="margin-bottom:16px">多数人猜对了结果，但几乎没人猜到「我」的反应会是「震悚」而不是「高兴」。</p>
+    <h3 style="font-size:15px;margin:0 0 10px">三条和你不一样的看法</h3>
+    <div class="quote"><b>初一 · 杭州</b>粗拙才更珍贵吧。要是印得很精美，那就是书本身好；正因为印得差，好的就只能是送书的人。</div>
+    <div class="quote"><b>初一 · 成都</b>我觉得他心爱的不是书，是「原来有人真把我的话放在心上」这件事。</div>
+    <div class="quote"><b>初一 · 北京</b>不同意上面两个。他后来还「更其搜集绘图的书」，说明他是真爱这类书，不能全归到感动上。</div>
+    ${nav(1,'去写','next')}`;
+  }
+  if(L.step===5){
+    const tiers=[['轻','一句话批注','15 字'],['中','三句评论','60 字'],['重','一段短评','150 字']];
+    body=`<div class="stephd"><b>写</b><span>阶梯输出 · 自选难度 · 可跳过</span></div>
+    <div class="tiers">${tiers.map((t,i)=>`<button data-t="${i}" aria-pressed="${L.tier===i}"><b>${t[0]}</b>${t[1]}<br><span style="font-size:11px;color:var(--ink-muted)">${t[2]}</span></button>`).join('')}</div>
+    <textarea id="wr" placeholder="${tiers[L.tier][1]}…">${L.write}</textarea>
+    <p class="note">写完会进「我的文库」，期末可导出成一本《我读过的 40 篇和我说过的话》。「重」档一周最多出现一次。</p>
+    ${nav(1,'完成今天这一篇','finish')}
+    <button class="ghost" data-act="finish">跳过，直接完成</button>`;
+  }
+  if(L.step===6){
+    const r2=R();
+    body=`<div class="done-hero"><div class="big">✓</div><h2 class="sec" style="margin-top:8px">今天读完了</h2>
+    <p class="sub">用时 14 分钟 · 本月进度 +1</p></div>
+    <div class="card" style="margin-top:4px">
+      <p class="eyebrow">第 7 题 · 地区加练（${r2.name}型）</p>
+      <h2 class="sec" style="font-size:15.5px;line-height:1.6">${r2.exq}</h2>
+      <p class="note">同一篇选文，四个地区只有这一题不同 —— 这就是「选文共用、题壳分区」。切到顶部别的地区看看。</p>
+    </div>
+    ${nav(1,'回到本月','back')}`;
+  }
+  return `<div class="steps">${[1,2,3,4,5].map(i=>`<div class="${i<=L.step?'on':''}"></div>`).join('')}</div>
+    <div class="card">${body}</div>`;
+}
+function openLesson(){
+  L={step:1,guess:null,l1:[null,null],l2:null,l3:'',evid:null,tier:1,write:''};
+  show('lesson');
+}
+function show(v){
+  document.getElementById('v-month').classList.toggle('hide',v!=='month');
+  document.getElementById('v-lesson').classList.toggle('hide',v!=='lesson');
+  document.getElementById('v-quiz').classList.toggle('hide',v!=='quiz');
+  document.getElementById('foot').classList.toggle('hide',v!=='month');
+  document.getElementById('back').classList.toggle('hide',v==='month');
+  document.getElementById('brand').innerHTML= v==='month'?'读得深<s>初一首月 · Demo</s>'
+    : v==='lesson'?'《阿长与〈山海经〉》<s>名著切片</s>' : '周测<s>'+R().name+'型</s>';
+  if(v==='lesson') document.getElementById('v-lesson').innerHTML=lessonHTML();
+  if(v==='quiz') document.getElementById('v-quiz').innerHTML=quizHTML();
+  window.scrollTo(0,0);
+}
+function quizHTML(){
+  const r=R();const sum=r.paper.reduce((a,b)=>a+b[1],0);
+  return `<div class="card"><p class="eyebrow">第 4 周 · 整卷模拟</p>
+  <h2 class="sec">${r.name}型周测（示意）</h2><p class="sub">按本地中考卷型的板块顺序与配分比例缩小 · 30 分钟 · 满分 ${sum}</p>
+  <table><thead><tr><th>板块</th><th class="num">分值</th></tr></thead><tbody>
+  ${r.paper.map(p=>`<tr><td><b>${p[0]}</b></td><td class="num">${p[1]}</td></tr>`).join('')}
+  <tr><td><b>合计</b></td><td class="num"><b>${sum}</b></td></tr></tbody></table>
+  <p class="note">${r.note}。本地中考语文满分 ${r.full} 分。</p></div>
+  <div class="card"><p class="eyebrow">样题 · 本地特色题</p>
+  <p style="color:var(--ink)">${r.exq}</p>
+  <p class="note">初一阶段的地区差异主要在题型外壳与配分，不在考点范围 —— 能说「题型和配分跟本地一致」，不能说「押本地考点」。</p></div>
+  <button class="cta" data-act="back">回到本月</button>`;
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-r],[data-w],[data-g],[data-s],[data-q],[data-t],[data-ev],[data-act],[data-an],#evid');
+  if(!t) return;
+  if(t.dataset.r){ S.region=t.dataset.r; save(); renderRegions(); renderMonth();
+    if(!document.getElementById('v-lesson').classList.contains('hide')) show('lesson');
+    if(!document.getElementById('v-quiz').classList.contains('hide')) show('quiz'); return; }
+  if(t.dataset.w!==undefined&&t.dataset.i!==undefined){
+    const wi=+t.dataset.w, ii=+t.dataset.i, it=WEEKS[wi].items[ii];
+    if(it.play){ openLesson(); return; }
+    if(it.quiz){ show('quiz'); return; }
+    S.done[wi+'-'+ii]=!S.done[wi+'-'+ii]; save(); renderMonth(); return; }
+  if(t.dataset.an){ alert(t.dataset.an); return; }
+  if(t.dataset.g!==undefined){ L.guess=+t.dataset.g; show('lesson'); return; }
+  if(t.dataset.s){ S.scaf=t.dataset.s; save(); show('lesson'); return; }
+  if(t.dataset.q!==undefined){ const q=+t.dataset.q,o=+t.dataset.o;
+    const ta=document.getElementById('l3'); if(ta) L.l3=ta.value;
+    if(q===0){ if(L.l1[0]===null) L.l1[0]=o; } else { if(L.l2===null) L.l2=o; }
+    show('lesson'); return; }
+  if(t.id==='evid'){ const ta=document.getElementById('l3'); if(ta) L.l3=ta.value;
+    L.pick=!L.pick; show('lesson'); return; }
+  if(t.dataset.ev!==undefined){ const ta=document.getElementById('l3'); if(ta) L.l3=ta.value;
+    L.evid=+t.dataset.ev; L.pick=0; show('lesson'); return; }
+  if(t.dataset.t!==undefined){ const ta=document.getElementById('wr'); if(ta) L.write=ta.value; L.tier=+t.dataset.t; show('lesson'); return; }
+  if(t.dataset.act==='next'){
+    const ta=document.getElementById('l3'); if(ta) L.l3=ta.value;
+    L.step++; show('lesson'); return; }
+  if(t.dataset.act==='finish'){ const ta=document.getElementById('wr'); if(ta) L.write=ta.value;
+    S.done['1-3']=true; save(); L.step=6; show('lesson'); return; }
+  if(t.dataset.act==='back'){ renderMonth(); show('month'); return; }
+});
+document.addEventListener('input',e=>{ if(e.target.id==='l3'){ L.l3=e.target.value;
+  const b=document.querySelector('#v-lesson .cta'); if(b) b.disabled=!(L.l3.length>=30&&L.evid!==null); } });
+document.getElementById('back').addEventListener('click',()=>{ renderMonth(); show('month'); });
+
+renderRegions(); renderMonth();
+</script>
+</body>
+</html>
