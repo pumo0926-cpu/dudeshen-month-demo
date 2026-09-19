@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>读得深 · 初一首月训练 Demo</title>
+<meta name="description" content="初一首月阅读训练：4 个主题簇、16 篇选文、120 道练习。首版不分地区，一套内容打到底。">
+<meta name="theme-color" content="#f9f9f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0d0d" media="(prefers-color-scheme: dark)">
+<style>
+:root{color-scheme:light dark;
+ --plane:#f9f9f7;--surface:#fcfcfb;--surface-2:#f3f2ef;
+ --ink:#0b0b0b;--ink-2:#52514e;--ink-muted:#898781;
+ --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);
+ --accent:#2a78d6;--accent-soft:#86b6ef;--track:#cde2fb;--wash:#eaf2fd;
+ --emph-on:#2a78d6;--emph-off:#86b6ef;--ok:#006300;--r:14px}
+@media (prefers-color-scheme:dark){:root{
+ --plane:#0d0d0d;--surface:#1a1a19;--surface-2:#232321;
+ --ink:#fff;--ink-2:#c3c2b7;--ink-muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);
+ --accent:#3987e5;--accent-soft:#6da7ec;--track:#2c2c2a;--wash:#141c26;
+ --emph-on:#6da7ec;--emph-off:#256abf;--ok:#0ca30c}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--plane);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;padding:0 16px 96px;min-height:100vh}
+h1,h2,h3{margin:0;line-height:1.35}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.hide{display:none!important}
+.top{position:sticky;top:0;z-index:20;background:var(--plane);padding:14px 16px 10px;margin:0 -16px;border-bottom:1px solid var(--border)}
+.top .row{display:flex;align-items:center;gap:10px}
+.brand{font-size:17px;font-weight:680;letter-spacing:-.01em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brand s{text-decoration:none;color:var(--ink-muted);font-weight:400;font-size:12.5px;margin-left:6px}
+.back{font-size:14px;color:var(--accent);flex:0 0 auto}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin:12px 0}
+.eyebrow{font-size:11.5px;letter-spacing:.14em;color:var(--ink-muted);margin:0 0 8px;text-transform:uppercase}
+h2.sec{font-size:18px;font-weight:650;margin:0 0 3px}
+.sub{font-size:12.5px;color:var(--ink-muted);margin:0 0 12px}
+p{margin:0 0 10px;font-size:15px;color:var(--ink-2)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 14px}
+.kpi{text-align:center;background:var(--surface-2);border-radius:10px;padding:9px 4px}
+.kpi b{display:block;font-size:19px;font-weight:660}
+.kpi span{font-size:11px;color:var(--ink-muted)}
+.meter .lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-2);margin-bottom:6px}
+.meter .lab b{color:var(--ink);font-variant-numeric:tabular-nums}
+.meter .track{height:10px;border-radius:5px;background:var(--track);overflow:hidden}
+.meter .fill{display:block;height:100%;background:var(--accent);border-radius:5px;transition:width .4s}
+.week{border:1px solid var(--border);border-radius:var(--r);background:var(--surface);margin:10px 0;overflow:hidden}
+.week>summary{list-style:none;cursor:pointer;padding:13px 15px;display:flex;align-items:center;gap:11px}
+.week>summary::-webkit-details-marker{display:none}
+.week .wn{flex:0 0 38px;height:38px;border-radius:10px;background:var(--wash);color:var(--accent);display:grid;place-items:center;font-weight:680;font-size:13px}
+.week .wt{flex:1;min-width:0}
+.week .wt b{display:block;font-size:15.5px;font-weight:620;color:var(--ink)}
+.week .wt i{font-style:normal;font-size:11.5px;color:var(--ink-muted);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.week .wc{font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.items{border-top:1px solid var(--grid)}
+.item{display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid var(--grid);width:100%;text-align:left}
+.item:last-child{border-bottom:0}
+.tick{flex:0 0 20px;height:20px;border-radius:50%;border:1.5px solid var(--axis);display:grid;place-items:center;font-size:11px;color:transparent}
+.item.done .tick{background:var(--accent);border-color:var(--accent);color:#fff}
+.it{flex:1;min-width:0}
+.it b{display:block;font-size:14.5px;font-weight:560;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it i{font-style:normal;font-size:11.5px;color:var(--ink-muted)}
+.badge{font-size:10.5px;padding:2px 7px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);flex:0 0 auto}
+.badge.b1{background:var(--accent);color:#fff;font-weight:600}
+.badge.b2{background:var(--wash);color:var(--accent)}
+.mlist{padding:4px 15px 12px;border-top:1px solid var(--grid)}
+.mrow{padding:9px 0;border-bottom:1px solid var(--grid);font-size:13.5px;color:var(--ink-2)}
+.mrow:last-child{border-bottom:0}
+.mrow b{color:var(--ink);font-size:14px}
+.mrow .tx{color:var(--ink);margin:3px 0;line-height:1.9}
+.mrow .qq{color:var(--accent);font-size:12.5px}
+.steps{display:flex;gap:5px;margin:14px 0 4px}
+.steps div{flex:1;height:3px;border-radius:2px;background:var(--grid)}
+.steps div.on{background:var(--accent)}
+.stephd{display:flex;align-items:baseline;gap:9px;margin:14px 0 10px}
+.stephd b{font-size:20px;font-weight:700;color:var(--accent)}
+.stephd span{font-size:12.5px;color:var(--ink-muted)}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--border);background:var(--surface);border-radius:11px;padding:12px 13px;margin:0 0 8px;font-size:14.5px;color:var(--ink-2)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--wash);color:var(--ink)}
+.scaf{display:flex;gap:6px;margin:0 0 12px}
+.scaf button{flex:1;font-size:12.5px;padding:7px 0;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--ink-2)}
+.scaf button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.bgcard{background:var(--wash);border-radius:11px;padding:11px 13px;font-size:13px;color:var(--ink-2);margin:0 0 12px}
+.bgcard b{color:var(--ink)}
+.txt p{font-size:16.5px;color:var(--ink);margin:0 0 15px;line-height:2.05;text-indent:2em}
+.txt p.tb{text-indent:0}
+.an{border-bottom:1px dashed var(--accent);cursor:pointer}
+.anbox{font-size:12.5px;color:var(--ink-2);background:var(--surface-2);border-left:2px solid var(--accent-soft);padding:8px 11px;border-radius:0 8px 8px 0;margin:0 0 14px}
+textarea{width:100%;border:1px solid var(--border);border-radius:11px;background:var(--surface);padding:11px;font:inherit;font-size:14.5px;color:var(--ink);resize:vertical;min-height:76px}
+textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.cta{display:block;width:100%;background:var(--accent);color:#fff;font-size:15.5px;font-weight:620;padding:13px;border-radius:12px;margin:16px 0 0;text-align:center}
+.cta[disabled]{opacity:.4}
+.link{display:block;width:100%;text-align:center;font-size:13.5px;color:var(--accent);padding:10px 0 0}
+.qh{font-size:15px;color:var(--ink);font-weight:600;margin:16px 0 4px}
+.qh small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-muted);letter-spacing:.06em;margin-bottom:5px}
+.reveal{font-size:12.5px;color:var(--accent);padding:6px 0}
+.fb{font-size:13px;border-radius:10px;padding:9px 11px;margin:6px 0 0;background:var(--surface-2);color:var(--ink-2)}
+.evid{border:1px dashed var(--axis);border-radius:11px;padding:10px 12px;font-size:13px;color:var(--ink-muted);margin:8px 0 0}
+.evid.has{border-style:solid;border-color:var(--accent-soft);color:var(--ink-2);background:var(--wash)}
+.peer .r{display:flex;align-items:center;gap:9px;margin:0 0 7px;font-size:13px}
+.peer .k{flex:0 0 22px;color:var(--ink-muted)}
+.peer .bar{flex:1;height:18px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.peer .bar i{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--emph-off)}
+.peer .r.me .bar i{background:var(--emph-on)}
+.peer .v{flex:0 0 34px;text-align:right;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.peer .r.me .v{color:var(--ink);font-weight:620}
+.quote{border-left:2px solid var(--accent-soft);padding:2px 0 2px 12px;margin:0 0 12px;font-size:14px;color:var(--ink-2)}
+.quote b{display:block;font-size:11.5px;color:var(--ink-muted);font-weight:400;margin-bottom:2px}
+.tiers{display:flex;gap:6px;margin:0 0 10px}
+.tiers button{flex:1;border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:9px 4px;font-size:12.5px;color:var(--ink-2);text-align:center}
+.tiers button b{display:block;font-size:14px;color:var(--ink);font-weight:620}
+.tiers button[aria-pressed="true"]{border-color:var(--accent);background:var(--wash)}
+.done-hero{text-align:center;padding:26px 0 6px}
+.done-hero .big{font-size:46px;font-weight:700;color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--grid);color:var(--ink-2);vertical-align:top}
+th{font-size:11.5px;color:var(--ink-muted);font-weight:520}
+td b{color:var(--ink);font-weight:600}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.note{font-size:11.5px;color:var(--ink-muted);margin:10px 0 0}
+.foot{font-size:11.5px;color:var(--ink-muted);text-align:center;line-height:1.9;padding:22px 0 0}
+.foot a{color:var(--ink-2)}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top">
+  <div class="row"><button class="back hide" id="back">‹ 返回</button><div class="brand" id="brand">读得深<s>初一首月 · Demo</s></div></div>
+</div>
+<div id="v-month"></div>
+<div id="v-lesson" class="hide"></div>
+<div id="v-quiz" class="hide"></div>
+<div class="foot" id="foot">
+  读得深 · 初一首月训练 Demo · 2026-09<br>
+  内容来自 <code>08-首月内容库-选文与练习.md</code> ／ <code>content/month01.json</code><br>
+  16 篇选文 · 120 道练习 · 首版不分地区<br>
+  名著切片为鲁迅公版作品，原文取自维基文库，逐字未改<br>
+  原创选文版权自持；非连续性文本中的数据为教学用虚构材料<br>
+  <a href="https://pumo0926-cpu.github.io/dudeshen-reading-h5/">← 查看完整产品方案</a>
+</div>
+</div>
+<script type="application/json" id="DATA">__DATA__</script>
+<script>
+const D=JSON.parse(document.getElementById('DATA').textContent);
+const KEY='dds_month_v2';
+let S=JSON.parse(localStorage.getItem(KEY)||'{"done":{},"scaf":"半扶"}');
+const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+const esc=s=>{const d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML};
+const byCluster=n=>D.items.filter(i=>i.cluster===n);
+const morningOf=n=>[D.morning[(n-1)*2],D.morning[(n-1)*2+1],D.morning[8+(n-1)*2],D.morning[8+(n-1)*2+1]];
+const TOTAL=D.items.length+D.morning.length+4;   // 16 篇 + 16 晨读 + 4 周测
+
+/* ---------- month ---------- */
+function counts(){
+  let n=0,mins=0;
+  D.items.forEach(i=>{if(S.done['i'+i.id]){n++;mins+=parseInt(i.minutes)||13;}});
+  for(let c=1;c<=4;c++){ if(S.done['m'+c]){n+=4;mins+=12;} if(S.done['q'+c]){n++;mins+=27;} }
+  return [n,mins];
+}
+function renderMonth(){
+  const [n,mins]=counts();
+  const weeks=D.clusters.map(c=>{
+    const its=byCluster(c.n), mor=morningOf(c.n);
+    const dn=its.filter(i=>S.done['i'+i.id]).length+(S.done['m'+c.n]?1:0)+(S.done['q'+c.n]?1:0);
+    const rows=its.map(i=>{
+      const done=S.done['i'+i.id]?' done':'';
+      const kind=i.source==='classic'?'名著切片':(i.source==='textbook'?'课内锚定':i.genre);
+      const w=i.words?`${i.words} 字`:'对着课本读';
+      const tag=i.source==='classic'?'<span class="badge b2">公版</span>':(i.source==='textbook'?'<span class="badge">课本</span>':'<span class="badge b1">可读</span>');
+      return `<button class="item${done}" data-open="${i.id}"><span class="tick">✓</span><span class="it"><b>${esc(i.title)}</b><i>${esc(kind)} · ${w} · ${esc(i.minutes||'')}</i></span>${tag}</button>`;
+    }).join('');
+    const mdone=S.done['m'+c.n]?' done':'', qdone=S.done['q'+c.n]?' done':'';
+    return `<details class="week"${c.n===1?' open':''}>
+      <summary><span class="wn">${esc(c.week)}</span><span class="wt"><b>${esc(c.name)}</b><i>知识线：${esc(c.line)}</i></span><span class="wc">${dn}/6</span></summary>
+      <div class="items">${rows}
+        <button class="item${mdone}" data-mor="${c.n}"><span class="tick">✓</span><span class="it"><b>晨读 4 则</b><i>${mor.map(m=>esc(m.title)).join(' / ')}</i></span><span class="badge">3 分钟</span></button>
+        <button class="item${qdone}" data-quiz="${c.n}"><span class="tick">✓</span><span class="it"><b>第 ${c.n} 周周测</b><i>通用卷型 · 25–30 分钟</i></span><span class="badge b2">通用卷型</span></button>
+      </div>
+      <div class="mlist hide" id="mor${c.n}">${mor.map(m=>
+        `<div class="mrow"><b>${esc(m.title)}</b> <span style="color:var(--ink-muted)">${esc(m.by)}</span>
+         <div class="tx">${m.text.map(esc).join('<br>')}</div><div class="qq">▸ ${esc(m.q)}</div></div>`).join('')}</div>
+    </details>`;
+  }).join('');
+  document.getElementById('v-month').innerHTML=`
+  <div class="card">
+    <p class="eyebrow">首月总量</p>
+    <h2 class="sec">9/21 – 10/18 · 打第一次月考</h2>
+    <p class="sub">四个主题簇 · 对应统编版（2024）七上第 1–2 单元 ＋《朝花夕拾》</p>
+    <div class="kpis"><div class="kpi"><b>12</b><span>精读</span></div><div class="kpi"><b>4</b><span>名著切片</span></div><div class="kpi"><b>16</b><span>晨读微篇</span></div><div class="kpi"><b>120</b><span>道练习</span></div></div>
+    <div class="meter"><div class="lab"><span>本月完成</span><span><b>${n}</b> / ${TOTAL} · 约 <b>${mins}</b> 分钟</span></div>
+      <div class="track"><i class="fill" style="width:${Math.round(n/TOTAL*100)}%"></i></div></div>
+    <p class="note">全月约 4.6 小时，平均每天 10 分钟 —— 远低于未成年人模式 1 小时上限。</p>
+  </div>
+  ${weeks}
+  <div class="card"><p class="eyebrow">这一版在演示什么</p>
+    <h2 class="sec">首版不分地区：一套内容打到底</h2>
+    <p>原设计按四个卷型集群（京津冀／沪／苏浙粤／川渝鄂）各出一道第 7 题、各出一套周测。<b>首版去掉这一层</b>：每篇只留 1 道第 7 题（关联题），周测收敛为一套通用卷型。</p>
+    <p class="note">练习量 168 → 120，首月内容成本约降 37%。地区差异在初一只体现在题型外壳与配分，不在考点范围 —— 判断保留，留待 v2。</p></div>
+  <div class="card"><p class="eyebrow">家长端 · 周报样张</p>
+    <h2 class="sec">第一位永远是孩子的原话</h2>
+    <div class="quote"><b>本周他写的</b>「阿长不识字，连书名都说错成『三哼经』，可她偏偏买到了。我觉得鲁迅震悚的不是书，是有人把他随口说的话当了真。」</div>
+    <table><tr><td><b>本周完成</b></td><td class="num">5 / 6</td></tr>
+    <tr><td><b>专注时长</b></td><td class="num">13.2 分钟/篇</td></tr>
+    <tr><td><b>带证据的输出</b></td><td class="num" style="color:var(--ok)">4 / 4</td></tr>
+    <tr><td><b>下周会读</b></td><td>《五猖会》片段 · 写人记事 2 篇</td></tr></table>
+    <p class="note">不提供催办、实时提醒、时长监控 —— 只做「看得见」，不做「管得着」。</p></div>`;
+}
+/* ---------- lesson ---------- */
+let L=null;
+const TIERS=[['轻','一句话批注',15],['中','三句评论',60],['重','一段短评',150]];
+function notesOf(it){
+  return (it.scaffold.notes||'').split('｜').map(s=>s.trim()).filter(Boolean).map(s=>{
+    const m=s.replace(/\*\*/g,'').split('：'); return [m[0].trim(), m.slice(1).join('：').trim()];
+  }).filter(x=>x[0]&&x[1]);
+}
+function lessonHTML(){
+  const it=L.item, nav=(ok,label)=>`<button class="cta" ${ok?'':'disabled'} data-act="next">${label}</button>`;
+  let b='';
+  if(L.step===1){
+    b=`<div class="stephd"><b>猜</b><span>读前预判 · 60 秒 · 怎么答都对</span></div>
+    <p style="color:var(--ink)">${esc(it.guess.q)}</p>
+    ${it.guess.options.map((o,i)=>`<button class="opt" data-g="${i}" aria-pressed="${L.guess===i}">${'ABCD'[i]}　${esc(o)}</button>`).join('')}
+    ${nav(L.guess!==null,'选好了，开始读')}`;
+  }
+  if(L.step===2){
+    const lv=S.scaf, showAnn=lv==='扶', showBg=lv!=='放', ns=notesOf(it);
+    let txt='';
+    if(it.source==='textbook'){
+      txt=`<div class="bgcard" style="border-left:3px solid var(--accent)"><b>本篇不提供原文</b><br>请翻开课本，读《${esc(it.title.split('·')[0].trim())}》。产品只给支架和题组 —— 这样既绕开教材版权，也让你和课本绑在一起。</div>`;
+    }else{
+      txt=`<div class="txt">${it.text.map(p=>{
+        let h=esc(p);
+        if(lv!=='放') ns.forEach(a=>{h=h.replace(a[0],`<span class="an" data-an="${esc(a[0]+'：'+a[1])}">${esc(a[0])}</span>`)});
+        const tb=/^[|*#>]|^材料|^>/.test(p)?' class="tb"':'';
+        return `<p${tb}>${h}</p>`;}).join('')}</div>`;
+    }
+    b=`<div class="stephd"><b>读</b><span>同一原文 · 支架三档 · ${esc(it.minutes||'')}</span></div>
+    <div class="scaf">${['扶','半扶','放'].map(x=>`<button data-s="${x}" aria-pressed="${x===lv}">${x}</button>`).join('')}</div>
+    ${showBg&&it.scaffold.bg?`<div class="bgcard"><b>背景卡</b>　${esc(it.scaffold.bg)}</div>`:''}
+    ${showAnn&&ns.length?`<div class="anbox">${ns.map(a=>`<b>${esc(a[0])}</b>：${esc(a[1])}`).join('　｜　')}</div>`:''}
+    ${txt}
+    <p class="note">${it.source==='classic'?'节选自鲁迅《朝花夕拾》，公有领域，'+esc(it.words)+' 字。':(it.source==='original'?'原创选文，版权自持，'+esc(it.words)+' 字。':'')}「放」档隐去全部注释与背景卡。</p>
+    ${nav(1,'读完了，去答题')}`;
+  }
+  if(L.step===3){
+    const q=it.questions, mk=(lv,arr)=>arr.map((x,i)=>{
+      const k=lv+i, shown=L.rev[k];
+      return `<div class="qh"><small>${lv} · ${lv==='L1'?'读到了什么':'作者怎么写的'}</small>${esc(x.q)}</div>
+      <textarea data-ans="${k}" placeholder="写下你的答案……">${esc(L.ans[k]||'')}</textarea>
+      <button class="reveal" data-rev="${k}">${shown?'收起判分口径':'▸ 对照判分口径'}</button>
+      ${shown?`<div class="fb">${esc(x.rubric)}</div>`:''}`;
+    }).join('');
+    b=`<div class="stephd"><b>问</b><span>三层追问 · ${q.L1.length+q.L2.length+1} 题</span></div>
+    ${mk('L1',q.L1)}${mk('L2',q.L2)}
+    <div class="qh"><small>L3 · 你怎么看 —— 不判对错，但必须有文本证据</small>${esc(q.L3.q)}</div>
+    <textarea data-ans="L3" placeholder="写下你的看法，至少 30 字……">${esc(L.ans.L3||'')}</textarea>
+    <div class="evid ${L.evid!==null?'has':''}" data-evid="1">${L.evid!==null?'已选证据：「'+esc((it.text[L.evid]||'').slice(0,26))+'…」　换一句':(it.source==='textbook'?'▸ 本篇证据来自课本，请把那一句抄进上面的答案里（demo 中点此视为已选）':'▸ 点这里从原文里选一句作为你的证据（必填）')}</div>
+    ${L.pick&&it.text.length?`<div style="margin-top:8px">${it.text.map((p,i)=>i).filter(i=>it.text[i].length>24&&!/^[|>*#]|^材料/.test(it.text[i])).slice(0,6).map(i=>
+       `<button class="opt" data-ev="${i}" aria-pressed="${L.evid===i}">${esc(it.text[i].slice(0,34))}…</button>`).join('')}</div>`:''}
+    ${nav((L.ans.L3||'').length>=30&&L.evid!==null,'提交，看看别人怎么想')}
+    <p class="note">L1／L2 在本 demo 中以简答形式呈现；正式产品里 L1 为可自动判分的客观题。<b>L3 不计分，但必须带文本证据才能提交 —— 没有分数就没有代写动机。</b></p>`;
+  }
+  if(L.step===4){
+    const g=it.guess;
+    b=`<div class="stephd"><b>辨</b><span>回看 ＋ 同龄人碰撞 · 2 分钟</span></div>
+    <div class="bgcard">读之前你猜的是：<b>${'ABCD'[L.guess]}　${esc(g.options[L.guess])}</b><br>现在还这么想吗？</div>
+    <p style="font-size:13px;color:var(--ink-muted);margin-bottom:4px">同年级的同学这样猜（你的选择为亮色 · 模拟数据）</p>
+    <div class="peer">${g.options.map((o,i)=>
+      `<div class="r ${i===L.guess?'me':''}"><span class="k">${'ABCD'[i]}</span><span class="bar"><i style="width:${g.peer[i]*1.6}%"></i></span><span class="v">${g.peer[i]}%</span></div>`).join('')}</div>
+    ${it.id==='1-4'?`<h3 style="font-size:15px;margin:16px 0 10px">三条和你不一样的看法</h3>
+      <div class="quote"><b>初一 · 杭州</b>粗拙才更珍贵吧。要是印得很精美，那好的就是书本身；正因为印得差，好的就只能是送书的人。</div>
+      <div class="quote"><b>初一 · 成都</b>我觉得他心爱的不是书，是「原来有人真把我的话放在心上」这件事。</div>
+      <div class="quote"><b>初一 · 北京</b>不同意上面两个。他后来还「更其搜集绘图的书」，说明他是真爱这类书。</div>`
+     :`<p class="note">正式产品在此展示三条<b>与你最不同</b>的同龄人观点（展示「最不同」而不是「最热门」）。本 demo 仅为《阿长与〈山海经〉》配了样例。</p>`}
+    ${nav(1,'去写')}`;
+  }
+  if(L.step===5){
+    const t=TIERS[L.tier], len=(L.write||'').length;
+    b=`<div class="stephd"><b>写</b><span>阶梯输出 · 自选难度</span></div>
+    <div class="tiers">${TIERS.map((x,i)=>`<button data-t="${i}" aria-pressed="${L.tier===i}"><b>${x[0]}</b>${x[1]}<br><span style="font-size:11px;color:var(--ink-muted)">${x[2]} 字</span></button>`).join('')}</div>
+    <textarea data-w="1" placeholder="${esc(t[1])}……">${esc(L.write||'')}</textarea>
+    <p class="note">已写 ${len} / ${t[2]} 字。写完会进「我的文库」，期末可导出《我读过的 40 篇和我说过的话》。</p>
+    ${len>=t[2]?`<button class="cta" data-act="finish">完成今天这一篇</button>`:`<button class="cta" disabled>还差 ${t[2]-len} 字</button>`}
+    ${L.tier>0?`<button class="link" data-t="0">写不动？只写一句就好 →</button>`:'<p class="note" style="text-align:center">没有「跳过」——效应量最大的一步不能是选项。门槛已经压到一句话。</p>'}`;
+  }
+  if(L.step===6){
+    b=`<div class="done-hero"><div class="big">✓</div><h2 class="sec" style="margin-top:8px">今天读完了</h2>
+      <p class="sub">${esc(it.minutes||'')} · 本月进度 +1</p></div>
+    <div class="card" style="margin-top:4px"><p class="eyebrow">第 7 题 · 关联题</p>
+      <h2 class="sec" style="font-size:15.5px;line-height:1.6">${esc((it.extra&&it.extra.q)||'')}</h2>
+      <p class="note">把这一篇和本周读过的另一篇（或一则晨读）接起来 —— 知识线靠这道题收口。</p></div>
+    <button class="cta" data-act="back">回到本月</button>`;
+  }
+  return `<div class="steps">${[1,2,3,4,5].map(i=>`<div class="${i<=L.step?'on':''}"></div>`).join('')}</div><div class="card">${b}</div>`;
+}
+function open(id){
+  const it=D.items.find(x=>x.id===id);
+  L={item:it,step:1,guess:null,ans:{},rev:{},evid:null,pick:0,tier:0,write:''};
+  show('lesson');
+}
+function quizHTML(n){
+  const paper=[['积累·运用',10],['现代文阅读 ①记叙',14],['现代文阅读 ②说明／非连续性文本',12],['古诗文（课内）',8],['名著阅读',6]];
+  const sum=paper.reduce((a,b)=>a+b[1],0);
+  const sample=byCluster(n)[1];
+  return `<div class="card"><p class="eyebrow">第 ${n} 周周测</p><h2 class="sec">通用卷型（示意）</h2>
+  <p class="sub">首版不分地区 · 30 分钟 · 满分 ${sum}</p>
+  <table><thead><tr><th>板块</th><th class="num">分值</th></tr></thead><tbody>
+  ${paper.map(p=>`<tr><td><b>${esc(p[0])}</b></td><td class="num">${p[1]}</td></tr>`).join('')}
+  <tr><td><b>合计</b></td><td class="num"><b>${sum}</b></td></tr></tbody></table>
+  <p class="note">板块顺序取各地中考的公约数，不对应任何单一地区。</p></div>
+  <div class="card"><p class="eyebrow">样题 · 第 7 题关联题（取自本周《${esc(sample.title)}》）</p>
+  <p style="color:var(--ink)">${esc(sample.extra.q)}</p>
+  <p class="note">第 7 题统一为跨篇／跨材料的关联题 —— 它同时服务本周的知识线，这是去掉地区分版本之后顺手拿到的好处。</p></div>
+  <button class="cta" data-act="back">回到本月</button>`;
+}
+function show(v,arg){
+  document.getElementById('v-month').classList.toggle('hide',v!=='month');
+  document.getElementById('v-lesson').classList.toggle('hide',v!=='lesson');
+  document.getElementById('v-quiz').classList.toggle('hide',v!=='quiz');
+  document.getElementById('foot').classList.toggle('hide',v!=='month');
+  document.getElementById('back').classList.toggle('hide',v==='month');
+  const br=document.getElementById('brand');
+  br.innerHTML = v==='month'?'读得深<s>初一首月 · Demo</s>'
+    : v==='lesson'?esc(L.item.title)+'<s>'+esc(L.item.source==='classic'?'名著切片':(L.item.source==='textbook'?'课内锚定':L.item.genre))+'</s>'
+    : '第 '+arg+' 周周测<s>通用卷型</s>';
+  if(v==='lesson') document.getElementById('v-lesson').innerHTML=lessonHTML();
+  if(v==='quiz'){S.quizN=arg;document.getElementById('v-quiz').innerHTML=quizHTML(arg);}
+  window.scrollTo(0,0);
+}
+function sync(){document.querySelectorAll('#v-lesson textarea').forEach(t=>{
+  if(t.dataset.ans) L.ans[t.dataset.ans]=t.value; if(t.dataset.w) L.write=t.value;});}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-open],[data-mor],[data-quiz],[data-g],[data-s],[data-an],[data-rev],[data-evid],[data-ev],[data-t],[data-act]');
+  if(!t)return;
+  const d=t.dataset;
+  if(d.open){open(d.open);return;}
+  if(d.mor){const el=document.getElementById('mor'+d.mor);el.classList.toggle('hide');
+    S.done['m'+d.mor]=true;save();return;}
+  if(d.quiz){S.done['q'+d.quiz]=true;save();show('quiz',+d.quiz);return;}
+  if(d.an){alert(d.an);return;}
+  if(d.g!==undefined){L.guess=+d.g;show('lesson');return;}
+  if(d.s){S.scaf=d.s;save();show('lesson');return;}
+  if(d.rev!==undefined){sync();L.rev[d.rev]=!L.rev[d.rev];show('lesson');return;}
+  if(d.evid){sync();if(L.item.source==='textbook'){L.evid=L.evid===null?0:null;}else{L.pick=!L.pick;}show('lesson');return;}
+  if(d.ev!==undefined){sync();L.evid=+d.ev;L.pick=0;show('lesson');return;}
+  if(d.t!==undefined){sync();L.tier=+d.t;show('lesson');return;}
+  if(d.act==='next'){sync();L.step++;show('lesson');return;}
+  if(d.act==='finish'){sync();S.done['i'+L.item.id]=true;save();L.step=6;show('lesson');return;}
+  if(d.act==='back'){renderMonth();show('month');return;}
+});
+document.addEventListener('input',e=>{
+  const t=e.target; if(t.tagName!=='TEXTAREA')return;
+  if(t.dataset.ans){L.ans[t.dataset.ans]=t.value;
+    if(t.dataset.ans==='L3'){const b=document.querySelector('#v-lesson .cta');if(b)b.disabled=!((L.ans.L3||'').length>=30&&L.evid!==null);}}
+  if(t.dataset.w){L.write=t.value;
+    const need=TIERS[L.tier][2],len=t.value.length,b=document.querySelector('#v-lesson .cta');
+    if(b){b.disabled=len<need;b.textContent=len>=need?'完成今天这一篇':'还差 '+(need-len)+' 字';
+      if(len>=need)b.dataset.act='finish';else delete b.dataset.act;}
+    const p=t.nextElementSibling;if(p&&p.className==='note')p.textContent=`已写 ${len} / ${need} 字。写完会进「我的文库」，期末可导出《我读过的 40 篇和我说过的话》。`;}
+});
+document.getElementById('back').addEventListener('click',()=>{renderMonth();show('month');});
+renderMonth();
+</script>
+</body>
+</html>
