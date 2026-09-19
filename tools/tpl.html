@@ -97,6 +97,9 @@ textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
 .qh small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-muted);letter-spacing:.06em;margin-bottom:5px}
 .reveal{font-size:12.5px;color:var(--accent);padding:6px 0}
 .fb{font-size:13px;border-radius:10px;padding:9px 11px;margin:6px 0 0;background:var(--surface-2);color:var(--ink-2)}
+.fb.y{background:color-mix(in srgb,var(--ok) 12%,transparent);color:var(--ok)}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,transparent)}
+.opt.wrong{border-color:var(--axis);opacity:.5}
 .evid{border:1px dashed var(--axis);border-radius:11px;padding:10px 12px;font-size:13px;color:var(--ink-muted);margin:8px 0 0}
 .evid.has{border-style:solid;border-color:var(--accent-soft);color:var(--ink-2);background:var(--wash)}
 .peer .r{display:flex;align-items:center;gap:9px;margin:0 0 7px;font-size:13px}
@@ -246,22 +249,32 @@ function lessonHTML(){
     ${nav(1,'读完了，去答题')}`;
   }
   if(L.step===3){
-    const q=it.questions, mk=(lv,arr)=>arr.map((x,i)=>{
-      const k=lv+i, shown=L.rev[k];
+    const q=it.questions;
+    const mk=(lv,arr)=>arr.map((x,i)=>{
+      const k=lv+i, picked=L.ch[k], done=picked!==undefined;
+      const opts=(x.options||[]).map((o,j)=>{
+        let cls='opt';
+        if(done) cls+= (j===x.answer?' right':(j===picked?' wrong':''));
+        return `<button class="${cls}" data-ch="${k}" data-o="${j}" aria-pressed="${picked===j}">${'ABC'[j]}　${esc(o)}</button>`;
+      }).join('');
+      const ok=done&&picked===x.answer;
       return `<div class="qh"><small>${lv} · ${lv==='L1'?'读到了什么':'作者怎么写的'}</small>${esc(x.q)}</div>
-      <textarea data-ans="${k}" placeholder="写下你的答案……">${esc(L.ans[k]||'')}</textarea>
-      <button class="reveal" data-rev="${k}">${shown?'收起判分口径':'▸ 对照判分口径'}</button>
-      ${shown?`<div class="fb">${esc(x.rubric)}</div>`:''}`;
+      ${opts}
+      ${done?`<div class="fb ${ok?'y':''}">${ok?'✓ 对了。':'再看一眼原文。'}${esc(x.rubric)}</div>`:''}
+      ${done&&lv==='L2'?`<textarea data-ans="${k}" placeholder="想补一句理由吗？（选填，不影响提交）">${esc(L.ans[k]||'')}</textarea>`:''}`;
     }).join('');
-    b=`<div class="stephd"><b>问</b><span>三层追问 · ${q.L1.length+q.L2.length+1} 题</span></div>
+    const nAll=q.L1.length+q.L2.length, nDone=Object.keys(L.ch).length;
+    b=`<div class="stephd"><b>问</b><span>三层追问 · ${nAll+1} 题 · 前 ${nAll} 题点选即可</span></div>
     ${mk('L1',q.L1)}${mk('L2',q.L2)}
     <div class="qh"><small>L3 · 你怎么看 —— 不判对错，但必须有文本证据</small>${esc(q.L3.q)}</div>
     <textarea data-ans="L3" placeholder="写下你的看法，至少 30 字……">${esc(L.ans.L3||'')}</textarea>
-    <div class="evid ${L.evid!==null?'has':''}" data-evid="1">${L.evid!==null?'已选证据：「'+esc((it.text[L.evid]||'').slice(0,26))+'…」　换一句':(it.source==='textbook'?'▸ 本篇证据来自课本，请把那一句抄进上面的答案里（demo 中点此视为已选）':'▸ 点这里从原文里选一句作为你的证据（必填）')}</div>
+    <button class="reveal" data-starter="1">${L.starter?'收起':'▸ 写不出来？看三个开头'}</button>
+    ${L.starter?`<div class="fb">① 我觉得……，因为文中说「……」。<br>② 一开始我以为……，读完发现……。<br>③ 如果换成我，我会……，但文中的人选择了……。</div>`:''}
+    <div class="evid ${L.evid!==null?'has':''}" data-evid="1">${L.evid!==null?'已选证据：「'+esc((it.text[L.evid]||'').slice(0,26))+'…」　换一句':'▸ 点这里从原文里选一句作为你的证据（必填）'}</div>
     ${L.pick&&it.text.length?`<div style="margin-top:8px">${it.text.map((p,i)=>i).filter(i=>it.text[i].length>24&&!/^[|>*#]|^材料/.test(it.text[i])).slice(0,6).map(i=>
        `<button class="opt" data-ev="${i}" aria-pressed="${L.evid===i}">${esc(it.text[i].slice(0,34))}…</button>`).join('')}</div>`:''}
     ${nav((L.ans.L3||'').length>=30&&L.evid!==null,'提交，看看别人怎么想')}
-    <p class="note">L1／L2 在本 demo 中以简答形式呈现；正式产品里 L1 为可自动判分的客观题。<b>L3 不计分，但必须带文本证据才能提交 —— 没有分数就没有代写动机。</b></p>`;
+    <p class="note">前 ${nAll} 题点一下就有对错反馈${nDone<nAll?`（还有 ${nAll-nDone} 题没选）`:'（已全部作答）'}。<b>只有 L3 要自己写：不计分，但必须带文本证据才能提交 —— 没有分数就没有代写动机。</b></p>`;
   }
   if(L.step===4){
     const g=it.guess;
@@ -298,7 +311,7 @@ function lessonHTML(){
 }
 function open(id){
   const it=D.items.find(x=>x.id===id);
-  L={item:it,step:1,guess:null,ans:{},rev:{},evid:null,pick:0,tier:0,write:''};
+  L={item:it,step:1,guess:null,ans:{},ch:{},rev:{},starter:0,evid:null,pick:0,tier:0,write:''};
   show('lesson');
 }
 function quizHTML(n){
@@ -343,7 +356,7 @@ function show(v,arg){
 function sync(){document.querySelectorAll('#v-lesson textarea').forEach(t=>{
   if(t.dataset.ans) L.ans[t.dataset.ans]=t.value; if(t.dataset.w) L.write=t.value;});}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-qk],[data-open],[data-mor],[data-quiz],[data-g],[data-s],[data-an],[data-rev],[data-evid],[data-ev],[data-t],[data-act]');
+  const t=e.target.closest('[data-ch],[data-starter],[data-qk],[data-open],[data-mor],[data-quiz],[data-g],[data-s],[data-an],[data-rev],[data-evid],[data-ev],[data-t],[data-act]');
   if(!t)return;
   const d=t.dataset;
   if(d.open){open(d.open);return;}
@@ -353,6 +366,8 @@ document.addEventListener('click',e=>{
   if(d.an){alert(d.an);return;}
   if(d.g!==undefined){L.guess=+d.g;show('lesson');return;}
   if(d.s){S.scaf=d.s;save();show('lesson');return;}
+  if(d.ch!==undefined){sync();if(L.ch[d.ch]===undefined)L.ch[d.ch]=+d.o;show('lesson');return;}
+  if(d.starter!==undefined){sync();L.starter=!L.starter;show('lesson');return;}
   if(d.rev!==undefined){sync();L.rev[d.rev]=!L.rev[d.rev];show('lesson');return;}
   if(d.qk!==undefined){const[w,sec,i]=d.qk.split('|');const el=document.getElementById('k'+w+'-'+sec+'-'+i);
     if(el){el.classList.toggle('hide');t.textContent=el.classList.contains('hide')?'▸ 对照要点':'▾ 收起要点';}return;}
