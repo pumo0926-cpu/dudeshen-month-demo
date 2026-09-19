@@ -166,7 +166,7 @@ function renderMonth(){
     const rows=its.map(i=>{
       const done=S.done['i'+i.id]?' done':'';
       const kind=i.source==='classic'?'名著切片':(i.source==='textbook'?'课内锚定':i.genre);
-      const w=i.words?`${i.words} 字`:'对着课本读';
+      const w=i.words?`${i.words} 字`:(i.source==='textbook'?'正文待授权 · 对照课本':'—');
       const tag=i.source==='classic'?'<span class="badge b2">公版</span>':(i.source==='textbook'?'<span class="badge">课本</span>':'<span class="badge b1">可读</span>');
       return `<button class="item${done}" data-open="${i.id}"><span class="tick">✓</span><span class="it"><b>${esc(i.title)}</b><i>${esc(kind)} · ${w} · ${esc(i.minutes||'')}</i></span>${tag}</button>`;
     }).join('');
@@ -226,8 +226,9 @@ function lessonHTML(){
   if(L.step===2){
     const lv=S.scaf, showAnn=lv==='扶', showBg=lv!=='放', ns=notesOf(it);
     let txt='';
-    if(it.source==='textbook'){
-      txt=`<div class="bgcard" style="border-left:3px solid var(--accent)"><b>本篇不提供原文</b><br>请翻开课本，读《${esc(it.title.split('·')[0].trim())}》。产品只给支架和题组 —— 这样既绕开教材版权，也让你和课本绑在一起。</div>`;
+    if(it.source==='textbook'&&!it.text.length){
+      const rt=it.rights||{};
+      txt=`<div class="bgcard" style="border-left:3px solid var(--accent)"><b>本篇正文待授权</b><br>${esc(rt.author||'')}《${esc(it.title.split('·')[0].trim())}》仍在著作权保护期内${rt.until?'（至 '+rt.until+' 年底）':''}，取得授权前产品内不放全文。<br><br>预习/复习请对照课本第二单元；下面的支架与题组照常可用。</div>`;
     }else{
       txt=`<div class="txt">${it.text.map(p=>{
         let h=esc(p);
@@ -240,7 +241,7 @@ function lessonHTML(){
     ${showBg&&it.scaffold.bg?`<div class="bgcard"><b>背景卡</b>　${esc(it.scaffold.bg)}</div>`:''}
     ${showAnn&&ns.length?`<div class="anbox">${ns.map(a=>`<b>${esc(a[0])}</b>：${esc(a[1])}`).join('　｜　')}</div>`:''}
     ${txt}
-    <p class="note">${it.source==='classic'?'节选自鲁迅《朝花夕拾》，公有领域，'+esc(it.words)+' 字。':(it.source==='original'?'原创选文，版权自持，'+esc(it.words)+' 字。':'')}「放」档隐去全部注释与背景卡。</p>
+    <p class="note">${it.source==='classic'?'节选自鲁迅《朝花夕拾》，公有领域，'+esc(it.words)+' 字。':(it.source==='original'?'原创选文，版权自持，'+esc(it.words)+' 字。':(it.text.length?'课本原文，'+esc(it.rights&&it.rights.author||'')+'，公有领域（'+esc(it.words)+' 字）。放在这里是为了预习和复习时不用翻书。':''))}「放」档隐去全部注释与背景卡。</p>
     ${nav(1,'读完了，去答题')}`;
   }
   if(L.step===3){
