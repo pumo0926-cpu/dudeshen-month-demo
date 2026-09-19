@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>读得深 · 初一首月训练 Demo</title>
-<meta name="description" content="初一首月阅读训练：4 个主题簇、16 篇选文、120 道练习。首版不分地区，一套内容打到底。">
+<meta name="description" content="初一首月阅读训练：4 个主题簇、16 篇选文、4 套周测、172 道练习。首版不分地区，一套内容打到底。">
 <meta name="theme-color" content="#f9f9f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0d0d0d" media="(prefers-color-scheme: dark)">
 <style>
@@ -27,6 +27,7 @@ body{background:var(--plane);color:var(--ink);font-family:system-ui,-apple-syste
 h1,h2,h3{margin:0;line-height:1.35}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hide{display:none!important}
+.fb.hide{display:none!important}
 .top{position:sticky;top:0;z-index:20;background:var(--plane);padding:14px 16px 10px;margin:0 -16px;border-bottom:1px solid var(--border)}
 .top .row{display:flex;align-items:center;gap:10px}
 .brand{font-size:17px;font-weight:680;letter-spacing:-.01em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -134,7 +135,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 <div class="foot" id="foot">
   读得深 · 初一首月训练 Demo · 2026-09<br>
   内容来自 <code>08-首月内容库-选文与练习.md</code> ／ <code>content/month01.json</code><br>
-  16 篇选文 · 120 道练习 · 首版不分地区<br>
+  16 篇选文 · 172 道练习 · 4 套周测 · 首版不分地区<br>
   名著切片为鲁迅公版作品，原文取自维基文库，逐字未改<br>
   原创选文版权自持；非连续性文本中的数据为教学用虚构材料<br>
   <a href="https://pumo0926-cpu.github.io/dudeshen-reading-h5/">← 查看完整产品方案</a>
@@ -175,7 +176,7 @@ function renderMonth(){
       <summary><span class="wn">${esc(c.week)}</span><span class="wt"><b>${esc(c.name)}</b><i>知识线：${esc(c.line)}</i></span><span class="wc">${dn}/6</span></summary>
       <div class="items">${rows}
         <button class="item${mdone}" data-mor="${c.n}"><span class="tick">✓</span><span class="it"><b>晨读 4 则</b><i>${mor.map(m=>esc(m.title)).join(' / ')}</i></span><span class="badge">3 分钟</span></button>
-        <button class="item${qdone}" data-quiz="${c.n}"><span class="tick">✓</span><span class="it"><b>第 ${c.n} 周周测</b><i>通用卷型 · 25–30 分钟</i></span><span class="badge b2">通用卷型</span></button>
+        <button class="item${qdone}" data-quiz="${c.n}"><span class="tick">✓</span><span class="it"><b>第 ${c.n} 周周测</b><i>通用卷型 · 新文本 ＋ 13 题 · 30 分钟</i></span><span class="badge b2">通用卷型</span></button>
       </div>
       <div class="mlist hide" id="mor${c.n}">${mor.map(m=>
         `<div class="mrow"><b>${esc(m.title)}</b> <span style="color:var(--ink-muted)">${esc(m.by)}</span>
@@ -187,7 +188,7 @@ function renderMonth(){
     <p class="eyebrow">首月总量</p>
     <h2 class="sec">9/21 – 10/18 · 打第一次月考</h2>
     <p class="sub">四个主题簇 · 对应统编版（2024）七上第 1–2 单元 ＋《朝花夕拾》</p>
-    <div class="kpis"><div class="kpi"><b>12</b><span>精读</span></div><div class="kpi"><b>4</b><span>名著切片</span></div><div class="kpi"><b>16</b><span>晨读微篇</span></div><div class="kpi"><b>120</b><span>道练习</span></div></div>
+    <div class="kpis"><div class="kpi"><b>12</b><span>精读</span></div><div class="kpi"><b>4</b><span>名著切片</span></div><div class="kpi"><b>16</b><span>晨读微篇</span></div><div class="kpi"><b>172</b><span>道练习</span></div></div>
     <div class="meter"><div class="lab"><span>本月完成</span><span><b>${n}</b> / ${TOTAL} · 约 <b>${mins}</b> 分钟</span></div>
       <div class="track"><i class="fill" style="width:${Math.round(n/TOTAL*100)}%"></i></div></div>
     <p class="note">全月约 4.6 小时，平均每天 10 分钟 —— 远低于未成年人模式 1 小时上限。</p>
@@ -241,7 +242,7 @@ function lessonHTML(){
     ${showBg&&it.scaffold.bg?`<div class="bgcard"><b>背景卡</b>　${esc(it.scaffold.bg)}</div>`:''}
     ${showAnn&&ns.length?`<div class="anbox">${ns.map(a=>`<b>${esc(a[0])}</b>：${esc(a[1])}`).join('　｜　')}</div>`:''}
     ${txt}
-    <p class="note">${it.source==='classic'?'节选自鲁迅《朝花夕拾》，公有领域，'+esc(it.words)+' 字。':(it.source==='original'?'原创选文，版权自持，'+esc(it.words)+' 字。':(it.text.length?'课本原文，'+esc(it.rights&&it.rights.author||'')+'，公有领域（'+esc(it.words)+' 字）。放在这里是为了预习和复习时不用翻书。':''))}「放」档隐去全部注释与背景卡。</p>
+    <p class="note">${it.source==='classic'?'节选自鲁迅《朝花夕拾》，公有领域，'+esc(it.words)+' 字。':(it.source==='original'?'原创选文，版权自持，'+esc(it.words)+' 字。':(it.text.length?'课本原文 · '+esc((it.rights&&it.rights.author)||'')+' · '+esc(it.words)+' 字'+((it.rights&&it.rights.status)==='public_domain'?'（公有领域）':'（原型阶段收录，商业化前需取得授权）')+'。放在这里是为了预习和复习时不用翻书。':''))}「放」档隐去全部注释与背景卡。</p>
     ${nav(1,'读完了，去答题')}`;
   }
   if(L.step===3){
@@ -301,18 +302,28 @@ function open(id){
   show('lesson');
 }
 function quizHTML(n){
-  const paper=[['积累·运用',10],['现代文阅读 ①记叙',14],['现代文阅读 ②说明／非连续性文本',12],['古诗文（课内）',8],['名著阅读',6]];
-  const sum=paper.reduce((a,b)=>a+b[1],0);
-  const sample=byCluster(n)[1];
-  return `<div class="card"><p class="eyebrow">第 ${n} 周周测</p><h2 class="sec">通用卷型（示意）</h2>
-  <p class="sub">首版不分地区 · 30 分钟 · 满分 ${sum}</p>
-  <table><thead><tr><th>板块</th><th class="num">分值</th></tr></thead><tbody>
-  ${paper.map(p=>`<tr><td><b>${esc(p[0])}</b></td><td class="num">${p[1]}</td></tr>`).join('')}
-  <tr><td><b>合计</b></td><td class="num"><b>${sum}</b></td></tr></tbody></table>
-  <p class="note">板块顺序取各地中考的公约数，不对应任何单一地区。</p></div>
-  <div class="card"><p class="eyebrow">样题 · 第 7 题关联题（取自本周《${esc(sample.title)}》）</p>
-  <p style="color:var(--ink)">${esc(sample.extra.q)}</p>
-  <p class="note">第 7 题统一为跨篇／跨材料的关联题 —— 它同时服务本周的知识线，这是去掉地区分版本之后顺手拿到的好处。</p></div>
+  const q=(D.quizzes||[]).find(x=>x.week===n);
+  if(!q) return '<div class="card"><p>本周周测尚未录入。</p></div>';
+  const p=q.passage;
+  const secs=q.sections.map(sec=>`
+    <div class="card"><p class="eyebrow">${esc(sec.name)} · ${sec.points} 分</p>
+      ${sec.items.map((it,i)=>`
+        <div class="qh">${i+1}. ${esc(it.q)} <span style="color:var(--ink-muted);font-weight:400">（${it.pts} 分）</span></div>
+        <textarea data-qz="${n}-${esc(sec.name)}-${i}" placeholder="写下你的答案……"></textarea>
+        <button class="reveal" data-qk="${n}|${esc(sec.name)}|${i}">▸ 对照要点</button>
+        <div class="fb hide" id="k${n}-${esc(sec.name)}-${i}">${esc(it.key)}</div>`).join('')}
+    </div>`).join('');
+  return `<div class="card"><p class="eyebrow">${esc(q.title)}</p><h2 class="sec">通用卷型 · 满分 ${q.total}</h2>
+    <p class="sub">${esc(q.minutes)} · ${q.nq} 题 · 首版不分地区</p>
+    <div class="tw"><table><thead><tr><th>板块</th><th class="num">分值</th></tr></thead><tbody>
+    ${q.sections.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td class="num">${x.points}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="note">现代文阅读用的是<b>本周没读过的新文本</b> —— 只有拿没见过的文章考，才测得出迁移。</p></div>
+  <div class="card"><p class="eyebrow">阅读材料 · ${esc(p.genre)} · ${p.words} 字</p>
+    <h2 class="sec">${esc(p.title)}</h2>
+    <div class="txt" style="margin-top:10px">${p.text.map(x=>`<p>${esc(x)}</p>`).join('')}</div>
+    <p class="note">原创选文，版权自持。</p></div>
+  ${secs}
   <button class="cta" data-act="back">回到本月</button>`;
 }
 function show(v,arg){
@@ -332,7 +343,7 @@ function show(v,arg){
 function sync(){document.querySelectorAll('#v-lesson textarea').forEach(t=>{
   if(t.dataset.ans) L.ans[t.dataset.ans]=t.value; if(t.dataset.w) L.write=t.value;});}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-open],[data-mor],[data-quiz],[data-g],[data-s],[data-an],[data-rev],[data-evid],[data-ev],[data-t],[data-act]');
+  const t=e.target.closest('[data-qk],[data-open],[data-mor],[data-quiz],[data-g],[data-s],[data-an],[data-rev],[data-evid],[data-ev],[data-t],[data-act]');
   if(!t)return;
   const d=t.dataset;
   if(d.open){open(d.open);return;}
@@ -343,6 +354,8 @@ document.addEventListener('click',e=>{
   if(d.g!==undefined){L.guess=+d.g;show('lesson');return;}
   if(d.s){S.scaf=d.s;save();show('lesson');return;}
   if(d.rev!==undefined){sync();L.rev[d.rev]=!L.rev[d.rev];show('lesson');return;}
+  if(d.qk!==undefined){const[w,sec,i]=d.qk.split('|');const el=document.getElementById('k'+w+'-'+sec+'-'+i);
+    if(el){el.classList.toggle('hide');t.textContent=el.classList.contains('hide')?'▸ 对照要点':'▾ 收起要点';}return;}
   if(d.evid){sync();if(L.item.source==='textbook'){L.evid=L.evid===null?0:null;}else{L.pick=!L.pick;}show('lesson');return;}
   if(d.ev!==undefined){sync();L.evid=+d.ev;L.pick=0;show('lesson');return;}
   if(d.t!==undefined){sync();L.tier=+d.t;show('lesson');return;}
